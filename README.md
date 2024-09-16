@@ -6,7 +6,8 @@ This project provides a FastAPI-based service for image upscaling using a pre-tr
 <details>
   <summary><b>Example Output</b></summary>
 
-![image](https://github.com/user-attachments/assets/6729eef7-5779-44cc-8fed-253a1782dec1)
+![image_2024_09_12T14_03_41_124Z](https://github.com/user-attachments/assets/3637a498-3132-4bfa-818d-81aa9c619341)
+
 
 </details>
 
