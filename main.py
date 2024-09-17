@@ -1,7 +1,6 @@
 import os
 import base64
 import uuid
-import random
 import logging
 from io import BytesIO
 from typing import Optional
@@ -94,14 +93,17 @@ async def upscale_image(
         low_res_img = Image.open(BytesIO(await file.read())).convert("RGB")
         logger.info("Image loaded successfully.")
 
-        logger.info(f"Upscaling image to {target_width}x{target_height}.")
-        random_num = random.randint(0, 10000)
+        # Rescale the image
+        scale_factor = 4
+        target_width = max(target_width // scale_factor, 1)
+        target_height = max(target_height // scale_factor, 1)
+        low_res_img = low_res_img.resize((target_width, target_height))
+        logger.info(f"Image resized to {target_width}x{target_height}.")
+
         upscaled_image = upscale_pipeline(prompt=prompt, image=low_res_img).images[0]
 
-        # file_name = "".join(file.filename.split('.')[:-1])
-        # output_path = f"{folder_path}/upscaled_{random_num}_{file_name}.png"
-        sanitized_filename = f"{uuid.uuid4()}.png"
-        output_path = f"{folder_path}/{sanitized_filename}"
+        filename = f"{uuid.uuid4()}.png"
+        output_path = f"{folder_path}/{filename}"
         upscaled_image.save(output_path)
         logger.info(f"Image upscaled and saved to {output_path}.")
 
@@ -149,13 +151,10 @@ async def inpaint_image(
         mask_img = Image.open(BytesIO(await mask_file.read())).convert("RGB")
         logger.info("Image and mask loaded successfully.")
 
-        random_num = random.randint(0, 10000)
         inpainted_img = inpainting_pipeline(prompt=prompt, image=img, mask_image=mask_img).images[0]
 
-        # file_name = "".join(file.filename.split('.')[:-1])
-        # output_path = f"{folder_path}/inpainted_{random_num}_{file_name}.png"
-        sanitized_filename = f"{uuid.uuid4()}.png"
-        output_path = f"{folder_path}/{sanitized_filename}"
+        filename = f"{uuid.uuid4()}.png"
+        output_path = f"{folder_path}/{filename}"
         inpainted_img.save(output_path)
         logger.info(f"Image inpainted and saved to {output_path}.")
 
