@@ -9,15 +9,17 @@ load_dotenv()
 inpainting_model_id = os.getenv("INPAINTING_MODEL_NAME", "stabilityai/stable-diffusion-2-inpainting")
 upscale_model_id = os.getenv("UPSCALE_MODEL_NAME", "stabilityai/stable-diffusion-x4-upscaler")
 try:
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
     start_time = time.time()
     upscale_pipeline = StableDiffusionUpscalePipeline.from_pretrained(
         upscale_model_id, revision="fp16", torch_dtype=torch.float16
-    ).to("cuda")
+    ).to(device)
     
     # Load the inpainting pipeline
     inpainting_pipeline = AutoPipelineForInpainting.from_pretrained(
         inpainting_model_id, revision="fp16", torch_dtype=torch.float16
-    ).to("cuda")
+    ).to(device)
     end_time = time.time()
     print(f"Time taken to load pipeline: {end_time - start_time} seconds")
 except Exception as e:
